@@ -3,15 +3,90 @@
 <head>
     <meta charset="utf-8">
     <title>마커 클러스터러에 클릭이벤트 추가하기</title>
-    
+    <style>
+        @font-face {
+        font-family: 'DalseoHealingBold';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2207-01@1.0/DalseoHealingBold.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+        }
+        *{
+            font-family: DalseoHealingBold;
+        }
+        h1{
+            background-color: wheat;
+        }
+        .map_wrap{
+            width: 30%;
+            background-color: #93C6D5E5;
+        }
+        #menu_wrap{
+            display: flex;
+            flex-direction: column;    
+        }
+        .search, .selectedArea, .service{
+            margin-bottom: 5%;
+            
+        }
+        .servicecode.active{ 
+        background-color: #eeeeee; 
+         color: rgb(30, 15, 242);
+        }   
+
+        .servicecode{       
+        background-color: white;
+        color: black;
+        }
+    </style>
 </head>
 <body>
 
-<div id="map" style="width:100%;height:750px;"></div>
+<h1>김황배의 골목식당</h1>
+<div class="map_wrap">
+    <!-- <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div> -->
+    <div id="menu_wrap" class="bg_white">
+        <div class="search">
+            <div>
+                <form action="" method="get">
+                    지역 <input type="search" name="guName">
+                    <input type="submit" value="검색">
+                </form>
+            </div>
+        </div>
+    
+    <div class="selectedArea">
+        <p>선택된 지역 : </p>
+    </div>
+    <section class="service">
+        <button class="servicecode" value="한식음식점">한식음식점</button>
+        <button class="servicecode" value="일식음식점">일식음식점</button>
+        <button class="servicecode" value="중식음식점">중식음식점</button>
+        <button class="servicecode" value="제과점">제과점</button>
+        <button class="servicecode" value="패스트푸드점">패스트푸드점</button>
+        <button class="servicecode" value="치킨전문점">치킨전문점</button>
+        <button class="servicecode" value="분식전문점">분식전문점</button>
+        <button class="servicecode" value="호프/간이주점">호프/간이주점</button>
+        <button class="servicecode" value="커피/음료">커피/음료</button>
+    </section>
+    <div class="report">
+        <button>분석하기</button>
+    </div>
+</div>
+</div>
+<div id="map" style="width:100%;height:700px;position:relative;overflow:hidden;"></div>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9792b3125b1c069b26e0cd44dd8c3ed&libraries=clusterer"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
+    let service ;
+    $(document).ready(function() {       
+     $('.servicecode').on("click", function() {     //버튼 클릭시 호출되는 함수
+           $(this).addClass('active');      //클릭된 버튼에 속성(class 추가)
+           $(this).attr("disabled", true); 
+           service=($(this).val());//클릭된 버튼의 value 값
+           $('.selectedArea').after(service);
+     });
+    });
     var map = new kakao.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
         center : new kakao.maps.LatLng(37.564214, 127.001699), // 지도의 중심좌표
         level : 8 // 지도의 확대 레벨
@@ -25,7 +100,7 @@
     var clusterer = new kakao.maps.MarkerClusterer({
         map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
         averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-        minLevel: 10, // 클러스터 할 최소 지도 레벨
+        minLevel: 8, // 클러스터 할 최소 지도 레벨
         disableClickZoom: true // 클러스터 마커를 클릭했을 때 지도가 확대되지 않도록 설정한다
     });
 
@@ -38,6 +113,7 @@
         var markers = $(data.positions).map(function(i, position) {
             return new kakao.maps.Marker({
                 position : new kakao.maps.LatLng(position.lat, position.lng)
+                
             });
         });
 
@@ -52,7 +128,7 @@
 
         // 현재 지도 레벨에서 1레벨 확대한 레벨
         var level = map.getLevel()-1;
-
+       
         // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대합니다
         map.setLevel(level, {anchor: cluster.getCenter()});
     });
