@@ -13,16 +13,26 @@
         *{
             font-family: DalseoHealingBold;
         }
+        #map{
+            z-index: 1;
+        }
         h1{
             background-color: wheat;
         }
         .map_wrap{
-            width: 30%;
+            font-size:20px;
+            position:absolute;
+            left: 10px;
+            width: 20%;
+            height: 70%;
+            z-index: 2;
             background-color: #93C6D5E5;
         }
         #menu_wrap{
             display: flex;
-            flex-direction: column;    
+            flex-direction: column;
+            text-align: center;
+                
         }
         .search, .selectedArea, .service{
             margin-bottom: 5%;
@@ -37,6 +47,16 @@
         background-color: white;
         color: black;
         }
+        #report{
+            background-color: rgba(205, 226, 235, 1);
+            border-style: none;
+            width: 50%;
+            font-size: 25px;
+            margin-top: 10%;
+        
+            
+        }
+        
     </style>
 </head>
 <body>
@@ -69,7 +89,7 @@
         <button class="servicecode" value="커피/음료">커피/음료</button>
     </section>
     <div class="report">
-        <button>분석하기</button>
+        <button id="report">분석하기</button>
     </div>
 </div>
 </div>
