@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>김황배 김+배 mix 결과물</title>
+    <style>
+        @font-face {
+        font-family: 'DalseoHealingBold';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2207-01@1.0/DalseoHealingBold.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+        }
+        *{
+            font-family: DalseoHealingBold;
+        }
+        #map{
+            z-index: 1;
+        }
+        h1{
+            background-color: rgba(205, 226, 235, 1);
+        }
+        .map_wrap{
+            font-size:20px;
+            position:absolute;
+            left: 9px;
+            width: 20%;
+            height: 70%;
+            z-index: 2;
+            background-color: #93C6D5E5;
+        }
+        #menu_wrap{
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+                
+        }
+        .search, .selectedArea, .service{
+            margin-bottom: 5%;
+            
+            
+        }
+        .selectedArea{
+            display: flex; /* 이건 삭제하기 !  */
+            background-color: aliceblue;
+            border-radius: 20px;
+            margin-left: 2%;
+            margin-right: 2%;
+        }
+        .servicecode.active{ 
+        background-color: #eeeeee; 
+         color: rgb(30, 15, 242);
+        }   
+
+        .servicecode{       
+        background-color: white;
+        color: black;
+        }
+        #report{
+            background-color: rgba(205, 226, 235, 1);
+            border-style: none;
+            width: 50%;
+            font-size: 25px;
+            margin-top: 10%;
+        
+            
+        }
+        
+    </style>
+</head>
+<body>
+
+<h1>김황배의 골목식당</h1>
+<div class="map_wrap">
+    <!-- <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div> -->
+    <div id="menu_wrap" class="bg_white">
+        <div class="search">
+            <div>
+                <form action="" method="get">
+                    지역 <input type="search" name="guName">
+                    <input type="submit" value="검색">
+                </form>
+            </div>
+        </div>
+    
+    <div class="selectedArea">
+        <p>선택된 지역 : </p>
+    </div>
+    <section class="service">
+        <button class="servicecode" value="한식음식점">한식음식점</button>
+        <button class="servicecode" value="일식음식점">일식음식점</button>
+        <button class="servicecode" value="중식음식점">중식음식점</button>
+        <button class="servicecode" value="제과점">제과점</button>
+        <button class="servicecode" value="패스트푸드점">패스트푸드점</button>
+        <button class="servicecode" value="치킨전문점">치킨전문점</button>
+        <button class="servicecode" value="분식전문점">분식전문점</button>
+        <button class="servicecode" value="호프/간이주점">호프/간이주점</button>
+        <button class="servicecode" value="커피/음료">커피/음료</button>
+    </section>
+    <div class="report">
+        <button id="report">분석하기</button>
+    </div>
+</div>
+</div>
+<div id="map" style="width:100%;height:700px;"></div>
+<!-- position:relative;overflow:hidden; -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9792b3125b1c069b26e0cd44dd8c3ed&libraries=clusterer"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+    
+    var map = new kakao.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
+        center : new kakao.maps.LatLng(37.564214, 127.001699), // 지도의 중심좌표 
+        level :8  // 지도의 확대 레벨 , 8로 설정해야 서울시를 한눈에 보기 편함 
+    }); // 지도를 생성합니다
+
+    let service ;
+    $(document).ready(function() {       
+     $('.servicecode').on("click", function() {     //버튼 클릭시 호출되는 함수
+           $(this).addClass('active');      //클릭된 버튼에 속성(class 추가)
+           $(this).attr("disabled", true); 
+           service=($(this).val());//클릭된 버튼의 value 값
+           $('.selectedArea').after(service);
+     });
+    });
+// 커스텀 오버레이에 표시할 내용입니다     
+// HTML 문자열 또는 Dom Element 입니다 
+
+
+var position; //// 커스텀 오버레이가 표시될 위치입니다
+var content; //커스텀 오버레이에 표시할 내용 + 디자인 입니다 
+// var content = '<div class ="label"><span class="left"></span><span class="center">카카오!</span><span class="right"></span></div>';
+// 이렇게 html이랑 같이 지정하는데 json으로 불러오는거라 값만 가져오고 디자인 씌우는 아직 방법 못찾움ㅜ
+
+
+$.getJSON('http://127.0.0.1:8000/elastic/map/', function(data){
+    
+    var aJsonArray = new Array(); //json 데이터 저장할 배열
+
+    $.each(data.positions, function(i, item){ // 제이쿼리 each  == for문  position{} 에 접근해서 lat, lng, gu 하나씩 저장
+
+        var jsondata = JSON.stringify(item); // 문자열변환
+       //console.log(jsondata) // {"lat":"33.450690851406016","lng":"126.57040313031214"}
+         // lat : "123", "lng" : 123 형식이어야 파싱 성공
+
+        var obj = eval("("+jsondata+")"); //object 형태로 변경
+       //console.log(obj) // {lat: "33.450690851406016", lng: "126.57040313031214"}
+
+        var aJson = new Object(); //오브젝 생성
+
+        aJson.lat = obj.lat;  //오브젝트에 값 저장 
+        aJson.lng = obj.lng;
+        aJson.gu = obj.gu;
+
+        aJsonArray.push(aJson); //오브젝트값을 배열에 저장
+          
+
+    })
+    console.log(aJsonArray); 
+
+
+     $.each(aJsonArray, function (index, item) //for 문 index- 0,1,2,,, item- {lat, lng, gu}
+    {
+        position = new kakao.maps.LatLng(item.lat,item.lng); 
+        content = item.gu
+
+        var customOverlay = new kakao.maps.CustomOverlay({ 
+        position: position,
+        content: content   
+        });
+
+        customOverlay.setMap(map);
+
+
+    })
+
+})
+
+</script>
+</body>
+</html>
