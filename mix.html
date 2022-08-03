@@ -3,73 +3,9 @@
 <head>
     <meta charset="utf-8">
     <title>김황배 김+배 mix 결과물</title>
+    <link href="css/style.css" rel="stylesheet">
     <style>
-        @font-face {
-        font-family: 'DalseoHealingBold';
-        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2207-01@1.0/DalseoHealingBold.woff2') format('woff2');
-        font-weight: 700;
-        font-style: normal;
-        }
-        *{
-            font-family: DalseoHealingBold;
-        }
-        #map{
-            z-index: 1;
-        }
-        h1{
-            background-color: rgba(205, 226, 235, 1);
-        }
-        .map_wrap{
-            font-size:20px;
-            position:absolute;
-            left: 9px;
-            width: 20%;
-            height: 70%;
-            z-index: 2;
-            background-color: #93C6D5E5;
-        }
-        #menu_wrap{
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-                
-        }
-        .search, .selectedArea, .service{
-            margin-bottom: 5%;
-            
-            
-        }
-        .selectedArea{
-            display: flex; /* 이건 삭제하기 !  */
-            background-color: aliceblue;
-            border-radius: 20px;
-            margin-left: 2%;
-            margin-right: 2%;
-        }
-        .servicecode.active{ 
-        background-color: #eeeeee; 
-         color: rgb(30, 15, 242);
-        }   
-
-        .servicecode{       
-        background-color: white;
-        color: black;
-        }
-        #report{
-            background-color: rgba(205, 226, 235, 1);
-            border-style: none;
-            width: 50%;
-            font-size: 25px;
-            margin-top: 10%;
-        
-            
-        }
-        .label {margin-bottom: 96px;}
-.label * {display: inline-block;vertical-align: top;}
-/* .label .left {background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_l.png") no-repeat;display: inline-block;height: 24px;overflow: hidden;vertical-align: top;width: 7px;}
-.label .center {background: url(https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_bg.png) repeat-x;display: inline-block;height: 24px;font-size: 12px;line-height: 24px;}
-.label .right {background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_r.png") -1px 0  no-repeat;display: inline-block;height: 24px;overflow: hidden;width: 6px;} */
-        
+       
     </style>
 </head>
 <body>
@@ -193,7 +129,7 @@ $.getJSON('http://127.0.0.1:8000/elastic/map/', function(data){
         var customOverlay = new kakao.maps.CustomOverlay({ 
         position: position,
        /*  content : '<div class ="label"><span class="left"></span><span class="center">'+item.gu+ item.cnt+'</span><span class="right"></span></div>' , */
-       content : '<span class ="circle">'+item.gu+ item.cnt+'</span>' ,
+       content : '<div class="circle"><span class ="circlegu">'+item.gu+ '</span><div class="circlecnt">'+item.cnt+'</div></div>' 
         /* content:  item.gu  */   
         });
 
