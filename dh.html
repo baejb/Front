@@ -3,15 +3,79 @@
 <head>
     <meta charset="utf-8">
     <title>김황배 김+배 mix 결과물</title>
-    <link href="css/style.css" rel="stylesheet">
     <style>
-       
+        @font-face {
+        font-family: 'DalseoHealingBold';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2207-01@1.0/DalseoHealingBold.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+        }
+        *{
+            font-family: DalseoHealingBold;
+        }
+        #map{
+            z-index: 1;
+        }
+        h1{
+            background-color: rgba(205, 226, 235, 1);
+        }
+        .map_wrap{
+            font-size:20px;
+            position:absolute;
+            left: 9px;
+            width: 20%;
+            height: 70%;
+            z-index: 2;
+            background-color: #93C6D5E5;
+        }
+        #menu_wrap{
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+                
+        }
+        .search, .selectedArea, .service{
+            margin-bottom: 5%;
+            
+            
+        }
+        .selectedArea{
+            display: flex; /* 이건 삭제하기 !  */
+            background-color: aliceblue;
+            border-radius: 20px;
+            margin-left: 2%;
+            margin-right: 2%;
+        }
+        .servicecode.active{ 
+        background-color: #eeeeee; 
+         color: rgb(30, 15, 242);
+        }   
+
+        .servicecode{       
+        background-color: white;
+        color: black;
+        }
+        #report{
+            background-color: rgba(205, 226, 235, 1);
+            border-style: none;
+            width: 50%;
+            font-size: 25px;
+            margin-top: 10%;
+        
+            
+        }
+        .label {margin-bottom: 96px;}
+.label * {display: inline-block;vertical-align: top;}
+.label .left {background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_l.png") no-repeat;display: inline-block;height: 24px;overflow: hidden;vertical-align: top;width: 7px;}
+.label .center {background: url(https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_bg.png) repeat-x;display: inline-block;height: 24px;font-size: 12px;line-height: 24px;}
+.label .right {background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_r.png") -1px 0  no-repeat;display: inline-block;height: 24px;overflow: hidden;width: 6px;}
+        
     </style>
 </head>
 <body>
 
 <h1>김황배의 골목식당</h1>
-<div class="map_wrap" >
+<div class="map_wrap">
     <!-- <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div> -->
     <div id="menu_wrap" class="bg_white">
         <div class="search">
@@ -48,19 +112,15 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
 
- function panTo(lat,lng) {
+    function panTo() {
             // 이동할 위도 경도 위치를 생성합니다 
-          
+    
              // 지도 중심을 부드럽게 이동시킵니다
              // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-             //클릭 이벤트가 발생했을 때 그 당시의 위도 경도를 파라미터로 넘겨받아서 그때 그때 만들어주는것 ...! 
-             moveLatLon= new kakao.maps.LatLng(lat, lng)
-             map.panTo(moveLatLon);
-            
-               
-    } 
-  
-    
+             map.panTo(moveLatLon);            
+    }  
+
+   
     var map = new kakao.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
         center : new kakao.maps.LatLng(37.564214, 127.001699), // 지도의 중심좌표 
         level :8  // 지도의 확대 레벨 , 8로 설정해야 서울시를 한눈에 보기 편함 
@@ -78,19 +138,17 @@
 // 커스텀 오버레이에 표시할 내용입니다     
 // HTML 문자열 또는 Dom Element 입니다 
 
-let guname = new Array() ; // 구 이름을 저장할 배열선언 
-let gulat= new Array() ;
-let gulng= new Array() ;
-let moveLatLon= new Array() ;
+var moveLatLon;
 var position; //// 커스텀 오버레이가 표시될 위치입니다
-
-
-/* var clusterer = new kakao.maps.MarkerClusterer({
+//var content; //커스텀 오버레이에 표시할 내용 + 디자인 입니다 
+/* var content = '<div class ="label"><span class="left"></span><span class="center">카카오!</span><span class="right"></span></div>'; */
+// 이렇게 html이랑 같이 지정하는데 json으로 불러오는거라 값만 가져오고 디자인 씌우는 아직 방법 못찾움ㅜ
+var clusterer = new kakao.maps.MarkerClusterer({
         map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
         averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
         minLevel: 8, // 클러스터 할 최소 지도 레벨
         disableClickZoom: true // 클러스터 마커를 클릭했을 때 지도가 확대되지 않도록 설정한다
-    }); */
+    });
 /* $.get("http://127.0.0.1:8000/elastic/map/", function(data) {
         // 데이터에서 좌표 값을 가지고 마커를 표시합니다
         // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않습니다
@@ -110,23 +168,20 @@ $.getJSON('http://127.0.0.1:8000/elastic/map/', function(data){
     
     var aJsonArray = new Array(); //json 데이터 저장할 배열
 
-    $.each(data.positions, function(i, item ){ // 제이쿼리 each  == for문  position{} 에 접근해서 lat, lng, gu 하나씩 저장
+    $.each(data.positions, function(i, item){ // 제이쿼리 each  == for문  position{} 에 접근해서 lat, lng, gu 하나씩 저장
 
         var jsondata = JSON.stringify(item); // 문자열변환
        //console.log(jsondata) // {"lat":"33.450690851406016","lng":"126.57040313031214"}
          // lat : "123", "lng" : 123 형식이어야 파싱 성공
-        
 
         var obj = eval("("+jsondata+")"); //object 형태로 변경
        //console.log(obj) // {lat: "33.450690851406016", lng: "126.57040313031214"}
-       
 
         var aJson = new Object(); //오브젝 생성
 
         aJson.lat = obj.lat;  //오브젝트에 값 저장 
         aJson.lng = obj.lng;
         aJson.gu = obj.gu;
-        aJson.cnt = obj.cnt;
 
         aJsonArray.push(aJson); //오브젝트값을 배열에 저장
           
@@ -138,26 +193,24 @@ $.getJSON('http://127.0.0.1:8000/elastic/map/', function(data){
      $.each(aJsonArray, function (index, item) //for 문 index- 0,1,2,,, item- {lat, lng, gu}
     {
         position = new kakao.maps.LatLng(item.lat,item.lng); 
-        guname[index] = item.gu; //구 이름 저장 
-        gulat[index] = item.lat;
-        gulng[index] = item.lng;
+        content = item.gu
 
         var customOverlay = new kakao.maps.CustomOverlay({ 
         position: position,
-       /*  content : '<div class ="label"><span class="left"></span><span class="center">'+item.gu+ item.cnt+'</span><span class="right"></span></div>' , */
-        content : '<div class="circle" onclick="panTo('+item.lat+','+item.lng+')" title="클릭"><span class ="circlegu">'+item.gu+ '</span><div class="circlecnt">'+item.cnt+'</div></div>' 
-        //함수를 실행할 때 현재 위도 경도를 넘겨줌 
+        content : '<div id="my-div" onclick="panTo()" class ="label"><span class="left"></span><span class="center">'+content+'</span><span class="right"></span></div>' ,
+        /* content:  item.gu  */   
         });
         
+
+        moveLatLon = new kakao.maps.LatLng(item.lat, item.lng);
+        customOverlay.setMap(map);      
+
         
-        
-        customOverlay.setMap(map);
-       
-        
-        
-               
+
     })
-   
+    
+
+
 })
 
 </script>
